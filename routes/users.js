@@ -76,6 +76,117 @@ router.post('/register', (req, res) => {
   }
 });
 
+// Aad user
+router.post('/user/add', (req, res) => {
+  const { name, email, password, password2 } = req.body;
+  let errors = [];
+
+
+  if (password != password2) {
+    req.flash(
+                  'error_msg',
+                  'Passwords do not match'
+                );
+    res.redirect('/dashboard');
+  }
+
+  if (password.length < 6) {
+     req.flash(
+                  'error_msg',
+                  'Password must be at least 6 characters'
+                );
+     res.redirect('/dashboard');
+  }
+
+  if (errors.length > 0) {
+    res.redirect('/dashboard');
+  } else {
+    User.findOne({ email: email }).then(user => {
+      if (user) {
+          req.flash(
+                  'error_msg',
+                  'email is already in this system '
+                );
+          res.redirect('/dashboard');
+
+      } else {
+        const newUser = new User({
+          name,
+          email,
+          password
+        });
+
+        bcrypt.genSalt(10, (err, salt) => {
+          bcrypt.hash(newUser.password, salt, (err, hash) => {
+            if (err) throw err;
+            newUser.password = hash;
+            newUser
+              .save()
+              .then(user => {
+                req.flash(
+                  'success_msg',
+                  'User succesfully adding'
+                );
+                res.redirect('/dashboard');
+              })
+              .catch(err => console.log(err));
+          });
+        });
+      }
+    });
+  }
+});
+
+
+router.post('/user/edit', (req, res) => {
+  const { name, email, id } = req.body;
+  let errors = [];
+
+  if (errors.length > 0) {
+    res.redirect('/dashboard');
+  } else {
+   
+        const data = {
+          name,
+          email
+         
+        };
+
+        User.findOneAndUpdate(
+                {
+                    _id: id
+                },
+                data,
+                {
+                    new: true
+                }
+            ).then(user => {
+                req.flash(
+                  'success_msg',
+                  'User succesfully edit'
+                );
+                res.redirect('/dashboard');
+              });
+          }
+});
+
+router.post('/user/delete', (req, res) => {
+  const { id } = req.body;
+
+        User.deleteOne(
+                {
+                    _id: id
+                }
+            ).then(user => {
+                req.flash(
+                  'success_msg',
+                  'User succesfully deleted'
+                );
+                res.redirect('/dashboard');
+              });
+});
+
+
 // Login
 router.post('/login', (req, res, next) => {
   passport.authenticate('local', {

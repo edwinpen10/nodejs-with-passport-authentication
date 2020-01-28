@@ -1,3 +1,190 @@
 <h1 class="mt-4">Dashboard</h1>
-<p class="lead mb-3">Welcome <%= user.name %></p>
+<p class="lead mb-3">Welcome <%= user.email %></p>
 <a href="/users/logout" class="btn btn-secondary">Logout</a>
+<hr>
+ <br/>
+<% include ./partials/messages %>
+<br/>
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add">
+  Add User
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add User</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+ 
+      <form action="users/user/add" method="POST">
+      <div class="modal-body">
+        <div class="form-group">
+        	
+          <label for="name">Name</label>
+          <input
+            type="name"
+            id="name"
+            name="name"
+            class="form-control"
+            placeholder="Enter Name"
+           required
+          />
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            class="form-control"
+            placeholder="Enter Email"
+           required
+          />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            class="form-control"
+            placeholder="Create Password"
+           required
+          />
+        </div>
+        <div class="form-group">
+          <label for="password2">Confirm Password</label>
+          <input
+            type="password"
+            id="password2"
+            name="password2"
+            class="form-control"
+            placeholder="Confirm Password"
+           	required
+          />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Save changes</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+<br>
+<br>
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Nama</th>
+      <th scope="col">Email</th>
+      <th scope="col">Password</th>
+      <th scope="col">Action</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+  	<% for(var i=0; i < data.length; i++) { %>
+    <tr>
+      <th scope="row"><%= i+1 %></th>
+      <td><%= data[i].name %></td>
+      <td><%= data[i].email %></td>
+      <td><%= data[i].password %></td>
+       <td>
+
+       <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<%= data[i]._id %>">
+  		Edit
+		</button>
+
+       <div class="modal fade" id="edit<%= data[i]._id %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit User</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+ 
+      <form action="users/user/edit" method="POST">
+      <div class="modal-body">
+        <div class="form-group">
+        	<input type="hidden" name="id" value="<%= data[i]._id %>">
+          <label for="name">Name</label>
+          <input
+            type="name"
+            id="name"
+            name="name"
+            class="form-control"
+            placeholder="Enter Name"
+            value="<%= data[i].name %>"
+           required
+          />
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            class="form-control"
+            placeholder="Enter Email"
+            value="<%= data[i].email %>"
+           required
+          />
+        </div>
+ 
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-warning">Edit</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div></td>
+       <td> <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<%= data[i]._id %>">
+  		Delete
+		</button>
+
+       	<div class="modal fade" id="delete<%= data[i]._id %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Delete User</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+ 
+      <form action="users/user/delete" method="POST">
+      <div class="modal-body">
+        <div class="form-group">
+        	<input type="hidden" name="id" value="<%= data[i]._id %>">
+          <label for="name">Do you want to delete  <b><%= data[i].name %></b>  user ? </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+      	 <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+        <button type="submit" class="btn btn-danger">Yes</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+       </td>
+    </tr>
+	<% } %>
+
+   
+  </tbody>
+</table>
+<!-- Modal -->
+
